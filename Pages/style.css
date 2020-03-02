@@ -1,0 +1,15 @@
+body {
+	color: #FFFFFF;
+	background-color: #000000;
+	white-space: pre-line;
+}
+
+a.btn {
+    -webkit-appearance: button;
+    -moz-appearance: button;
+    appearance: button;
+
+    text-decoration: none;
+    color: #000000;
+	background-color: #ffffff;
+}
