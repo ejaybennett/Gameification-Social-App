@@ -2,7 +2,7 @@ import http.client
 import socket
 import select
 client1 = http.client.HTTPConnection('127.0.0.1', 8000)
-print(str(client1.request('GET','Signup:bob:boberson','Signup:bob:boberson')))
+print(str(client1.request('GET','','Signup:rip:zip')))
 a = client1.getresponse()
 print(a)
 print(a.msg)
