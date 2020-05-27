@@ -13,7 +13,7 @@ def getTableColumnNames(table = 'user_table'):
 
 def getFields(fields,restrictions,fetchOne = False,table = 'user_table'):
     if fields != '*':
-        fieldsText = '('+','.join([i for i in fields])+')'
+        fieldsText = ', '.join([i for i in fields])
     else:
         fieldsText = '*'
         fields = getTableColumnNames(table)
@@ -30,7 +30,7 @@ def getFields(fields,restrictions,fetchOne = False,table = 'user_table'):
     if len(restrictionsText) > 0:
         restrictionsText = 'WHERE ( ' + restrictionsText + ' );'
     command = '''SELECT {} FROM {} {}'''.format(fieldsText,table,restrictionsText)
-    #print(command)
+    print(command)
     cursor.execute(command)
     if not fetchOne:
         output = cursor.fetchall()
@@ -64,7 +64,10 @@ WHERE username='{}';'''.format(username)
 #    return ''.join([k for k in string if k.isalnum()])
 
 def makeStringSQLSafe(string):
-    return string.replace("'","''")
+    if "'" in string:
+        return string.replace("'","''")
+    else:
+        return string
 
 def initializeDatabase():
     connection = sqlite3.connect("socialite.db")
@@ -122,7 +125,7 @@ def updateProfile(username,password, newName,newGender,newRadius, newAge, newBio
         updateString = updateString + ''', bio ='{}' '''.format(str(newBio))
     command = '''UPDATE user_table
 SET age = {}, bio = '{}'
-WHERE username = '{}' AND pasword = '{}' '''.format(newAge, newBio,username,password)
+WHERE username = '{}' AND password = '{}' '''.format(newAge, newBio,username,password)
     cursor.execute(command)
     connection.commit()
 
@@ -208,8 +211,13 @@ def sendMessage(message, toUser,fromUser):
 class serverHandler(http.server.BaseHTTPRequestHandler):
     def parseRequest(self):
         requestText = str(self.rfile.read1(100))
+        if requestText[0:2] == "b'":
+            requestText = requestText[2:]
+        if requestText[-1] == "'":
+            requestText = requestText[0:-1]
         print('RequestText: ',requestText)
         data = requestText.split(':')
+        print(data)
         #print(data)
         self.commandType = makeStringSQLSafe(data[0])
         #FORMAT (Get): Login:Username:Password or Signup:Username:Password
@@ -240,11 +248,13 @@ class serverHandler(http.server.BaseHTTPRequestHandler):
         #print('Doing Get!')
         
         self.parseRequest()
-        addConnectionToClient(self.clientUserName,self.address_string())
+        
         if 'Login' in self.commandType:
             logData = getLoginInfo(self.clientUserName,self.clientPassword)
+            addConnectionToClient(self.clientUserName,self.address_string())
         elif 'Signup' in self.commandType:
             logData = getSignupInfo(self.clientUserName,self.clientPassword)
+            addConnectionToClient(self.clientUserName,self.address_string())
         elif 'PublicInfo' in self.commandType:
             logData = getPublicInfo(self.wantedUsername)
         self.send_response(200)
@@ -273,6 +283,8 @@ if __name__=='__main__':
     #initializeDatabase()
     connection = sqlite3.connect("socialite.db")
     cursor = connection.cursor()
+    cursor.execute('SELECT * FROM user_table')
+    print(cursor.fetchall())
     server_address = ('127.0.0.1', 8000)
     theServer = http.server.HTTPServer(server_address,serverHandler)
     theServer.serve_forever()    

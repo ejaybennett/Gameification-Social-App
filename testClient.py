@@ -9,14 +9,23 @@ print(a.msg)
 print(str(a.read()))
 
 client2 = http.client.HTTPConnection('127.0.0.1', 8000)
-print(str(client2.request('GET','Signup:bip:biperson','Signup:bob:boberson')))
+print(str(client2.request('GET','','Signup:bob:boberson')))
 b = client2.getresponse()
 print(b)
 print(b.msg)
 print(str(b.read()))
 
-client1.request('POST','Message:bob:biperson:heylilmamalemmewhisperinyourear'
-               ,'Message:bob:biperson:heylilmamalemmewhisperinyourear')
+print(str(client2.request('GET','','PublicInfo:rip')))
+b = client2.getresponse()
+print(b)
+print(b.msg)
+print(str(b.read()))
+
+print(str(client1.request('POST','','UpdateBio::zip:5:5:just_here_for_fat_dick:Ricko:F')))
+
+
+client1.request('POST',''
+               ,'Message:bob:rip:heylilmamalemmewhisperinyourear')
 
 
 host, port = ('127.0.0.1', 8001)
