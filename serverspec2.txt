@@ -1,0 +1,70 @@
+JSON objects:
+All variables marked with * are optional. 
+#This should be used to populate the profile cards
+PublicProfileSmall
+	Data: 'PublicProfileSmall'
+	Name: string
+	Gender: string *
+	username: string
+	Photo: photo type (low res)
+	Bio: string
+	Hobbies: string
+	LastMessage: string *
+PublicProfileFull
+	Data: 'PublicProfileFull'
+	Name: string
+	username: string
+	Gender: string *
+	Photo list: list[photo type] (high res) 
+	Bio: string 
+	Hobbies: string
+MessageList:
+	List[(PublicProfileSmall, [Message])]
+Message
+	Data: 'Message'
+	ToUsername:String *
+	FromUsername:String *
+	Sent: Time
+	MessageText:String
+	cookie *
+	username *
+	password *
+PrivateProfile:
+	Data: 'PrivateProfile'
+	Name: string *
+	Gender: string *
+	Photo list: list[photo type] (high res) *
+	Bio: string *
+	Hobbies: string *
+	LastMessage: string *
+	deviceID: string
+	cookie: string * 
+	Username: string
+	Password: string
+	Latitude: float
+	Longitude: float
+BlockUser:
+	Data:'BlockUser'
+	BlockingUsername: string
+	BlockingPassword: string
+	BlockedUsername: string
+	
+HTTP Messaging format:
+POST (In data)
+PrivateProfile object-> Updates given profile with new data (except for username and password). Use this for both update profile and the make profile page.
+Message object-> sends message to the given person. Requires either valid cookie or valid username and password
+BlockUser object-> blocks the user (specified by BlockedUsername)
+
+GET actions:
+GET privateProfile/username/password
+->Responds with a privateProfile object
+Use this to populate the edit own profile page.
+GET publicProfile/username
+->Responds with a publicProfileFull object
+Use this to populate a profile page of another user. We may want to preload and store this for the matches
+GET messageList/username/password
+->Responds with messageList object
+Use this to populate the list of people that the user has messaged, except for blocked users
+GET matches/username/password
+->Responds with list[PublicProfileSmall]
+The current list of nearbye people the user is allowed to start a convo with on the find people page
