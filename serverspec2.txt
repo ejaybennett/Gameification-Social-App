@@ -1,6 +1,12 @@
 JSON objects:
 All variables marked with * are optional. 
 #This should be used to populate the profile cards
+LoginOK
+	Data: 'LoginOk'
+	LoginValid: bool
+SignupOK
+	Data: 'SignupOK'
+	SignupValid: boollogin
 PublicProfileSmall
 	Data: 'PublicProfileSmall'
 	Name: string
